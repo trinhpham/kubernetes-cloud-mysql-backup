@@ -3,6 +3,7 @@ jobs:
   build:
     environment:
       IMAGE_NAME: trinhpham/mysql-backup-to-cloud
+      IMAGE_VERSION: 3.0
     docker:
       - image: circleci/buildpack-deps:buster
     steps:
@@ -10,18 +11,8 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest .
-  publish-latest:
-    environment:
-      IMAGE_NAME: trinhpham/mysql-backup-to-cloud
-      IMAGE_VERSION: 3.0
-    docker:
-      - image: circleci/buildpack-deps:buster
-    steps:
-      - setup_remote_docker
-      - run:
-          name: Publish Docker Image to Docker Hub
           command: |
+            docker build -t $IMAGE_NAME:latest .
             echo "$DOCKERHUB_PASS" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG="$IMAGE_VERSION.${CIRCLE_BUILD_NUM}"
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG
@@ -33,15 +24,9 @@ workflows:
   build-master:
     jobs:
       - build:
-          filters:
-            branches:
-              only: master
-      - publish-latest:
           context:
             # The context that holds DOCKERHUB_USERNAME and DOCKERHUB_PASS
             - DockerHub
-          requires:
-            - build
           filters:
             branches:
               only: master
