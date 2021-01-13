@@ -1,25 +1,35 @@
 # Set the base image
-FROM alpine:3.12.1
+FROM golang:buster
+
+# By-pass all interaction message
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required packages
-RUN apk -v --update add \
-    python3 \
-    py-pip \
-    groff \
-    less \
-    mailcap \
-    mysql-client \
-    curl \
-    py-crcmod \
-    bash \
-    libc6-compat \
-    gnupg \
-    coreutils \        
-    gzip \
-    go \
-    git && \
-    pip3 install --upgrade six awscli s3cmd python-magic && \
-    rm /var/cache/apk/*
+RUN apt update \
+    && apt install -y \
+        python3 \
+        python3-pip \
+        groff \
+        less \
+        mime-support \
+        curl \
+        bash \
+        gnupg \
+        coreutils \
+        gzip \
+        git \
+        wget \
+        gnupg \
+    && pip3 install --upgrade six awscli s3cmd python-magic crcmod
+
+# Install MySql client
+ARG MYSQL_VERSION=0.8.16-1
+RUN wget https://dev.mysql.com/get/mysql-apt-config_${MYSQL_VERSION}_all.deb \
+	&& dpkg -i mysql-apt-config_${MYSQL_VERSION}_all.deb \
+	&& rm -f mysql-apt-config_${MYSQL_VERSION}_all.deb
+RUN apt update \
+	&& apt install -y mysql-client \
+	&& apt clean all
 
 # Set Default Environment Variables
 ENV BACKUP_CREATE_DATABASE_STATEMENT=false
