@@ -12,9 +12,6 @@ jobs:
           name: Build Docker image
           command: docker build -t $IMAGE_NAME:latest .
   publish-latest:
-    context:
-      # The context that holds DOCKERHUB_USERNAME and DOCKERHUB_PASS
-      - DockerHub
     environment:
       IMAGE_NAME: trinhpham/mysql-backup-to-cloud
     docker:
@@ -24,7 +21,7 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "$DOCKERHUB_PASS" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
             docker push $IMAGE_NAME:latest
 
 workflows:
@@ -36,6 +33,9 @@ workflows:
             branches:
               only: master
       - publish-latest:
+          context:
+            # The context that holds DOCKERHUB_USERNAME and DOCKERHUB_PASS
+            - DockerHub
           requires:
             - build
           filters:
