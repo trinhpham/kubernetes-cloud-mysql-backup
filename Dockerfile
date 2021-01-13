@@ -43,10 +43,13 @@ ENV AGE_VERSION=31500bfa2f6a36d2958483fc54d6e3cc74154cbc
 ENV BACKUP_PROVIDER=aws
 
 # Install FiloSottile/age (https://github.com/FiloSottile/age)
-RUN git clone https://filippo.io/age && \
-    cd age && \
-    git checkout $AGE_VERSION && \
-    go build -o . filippo.io/age/cmd/... && cp age /usr/local/bin/
+RUN git clone https://filippo.io/age \
+    && cd age \
+    && git checkout $AGE_VERSION \
+    && go build -o . filippo.io/age/cmd/... \
+    && cp age /usr/local/bin/ \
+    && cd .. \
+    && rm -rf age
 
 # Set Google Cloud SDK Path
 ENV PATH /go/google-cloud-sdk/bin:$PATH
