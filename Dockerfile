@@ -18,7 +18,8 @@ RUN apt update \
         coreutils \
         gzip \
         git \
-        wget \
+        wget 
+	lsb-release \
         gnupg \
     && pip3 install --upgrade six awscli s3cmd python-magic crcmod
 
