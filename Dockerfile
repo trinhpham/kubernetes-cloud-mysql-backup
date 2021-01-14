@@ -70,4 +70,4 @@ RUN chmod +x /slack-alert.sh
 # Copy backup script and execute
 COPY resources/perform-backup.sh /
 RUN chmod +x /perform-backup.sh
-CMD ["sh", "/perform-backup.sh"]
+CMD ["/bin/bash", "/perform-backup.sh"]
